@@ -1,0 +1,105 @@
+<!doctype HTML>
+<html>
+<script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.6.2/aframe/build/aframe-ar.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+  <body>
+  	<div id="placement">
+
+  		<!-- <button class="button-song">
+	        SONG
+	    </button> -->
+	    <!-- <img id="image-object" style="width: 300px; height: 300px; border-style: none; outline: none;">
+	    <h3 id="text-object"></h3> -->
+	</div>
+	<!-- <div id="calm-song" class="hue"></div>
+	<div id="chill-song" class="brightness"></div>
+	<div id="happy-song" class="blur"></div>
+	<div id="energetic-song" class="saturate"></div> -->
+    <a-scene embedded arjs="debugUIEnabled: false; sourceType: webcam;">
+    	
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+  <script>
+	var dance;
+	var value;
+
+  	$(document).ready(function () {
+        $(".button-song").click(function () {
+            $.get("https://staging.vidia.site/obtain_song_info", function(data, status){
+            	dance = data.songFeatures.danceability;
+
+            	if (dance < 0.25) {
+            		$('#text-object').text("Calm Song");
+            		$('#image-object').attr('src', 'assets/mango.png');
+            	} else if (dance >= 0.25 && dance < 0.5) {
+            		$('#text-object').text("Chill Song");
+            		$('#image-object').attr('src', 'assets/banana.png');
+            	} else if (dance >= 0.5 && dance < 0.75) {
+					$('#text-object').text("Happy Song");
+					$('#image-object').attr('src', 'assets/orange.png');
+            	} else {
+            		$('#text-object').text("Energetic Song");
+            		$('#image-object').attr('src', 'assets/pineapple.png');
+            	}
+                // alert("Data: " + data + "\nStatus: " + status);
+                console.log(dance);
+            });
+        });
+    });
+
+    function fetchdata(){
+		$.ajax({
+			url: 'https://staging.vidia.site/obtain_song_info',
+			type: 'get',
+			success: function(response){
+			   	// Perform operation on the return value
+			   	//alert(response);
+			   	value = response.songFeatures.danceability;
+			   	if (value < 0.25) {
+            		// $('#text-object').text("Calm Song");
+            		// $('#image-object').attr('src', 'assets/mango.png');
+            		$('#placement').css("background", "#834ab2");
+            		$('#placement').removeClass("hue");
+            		$('#placement').removeClass("saturate");
+            		$('#placement').removeClass("brightness");
+            		$('#placement').addClass("blur");
+            	} else if (value >= 0.25 && value < 0.5) {
+            		// $('#text-object').text("Chill Song");
+            		// $('#image-object').attr('src', 'assets/banana.png');
+            		$('#placement').css("background", "#e59c75");
+            		$('#placement').removeClass("hue");
+            		$('#placement').removeClass("blur");
+            		$('#placement').removeClass("saturate");
+            		$('#placement').addClass("brightness");
+            	} else if (value >= 0.5 && value < 0.75) {
+					// $('#text-object').text("Happy Song");
+					// $('#image-object').attr('src', 'assets/orange.png');
+					$('#placement').css("background", "#f2db59");
+     				$('#placement').removeClass("blur");
+            		$('#placement').removeClass("hue");
+            		$('#placement').removeClass("brightness");
+     				$('#placement').addClass("saturate");
+            	} else {
+            		// $('#text-object').text("Energetic Song");
+            		// $('#image-object').attr('src', 'assets/pineapple.png');
+            		$('#placement').css("background", "#7aebff");
+            		$('#placement').removeClass("brightness");
+            		$('#placement').removeClass("saturate");
+            		$('#placement').removeClass("blur");
+            		$('#placement').addClass("hue");
+
+            	}
+			   	console.log(value);
+			}
+		});
+	}
+
+	$(document).ready(function(){
+		setInterval(fetchdata,500);
+	});
+
+  </script>
+</html>
